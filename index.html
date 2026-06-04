@@ -2773,55 +2773,59 @@
         }
 
         async function fetchAIPortGuide() {
-            const destId = document.getElementById('destination').value;
-            const destNode = mapNodes[destId];
-            if (!destNode) return;
+    const destId = document.getElementById('destination').value;
+    const destNode = mapNodes[destId];
+    if (!destNode) return;
 
-            const aiContainer = document.getElementById('aiGuideContainer');
-            aiContainer.classList.remove('hidden');
-            aiContainer.innerHTML = `<div class="flex justify-center items-center py-4"><i class="fas fa-circle-notch fa-spin text-purple-400 text-2xl"></i><span class="ml-3 text-purple-300 font-bold">Consulting AI Almanac for ` + destNode.name + `...</span></div>`;
+    const aiContainer = document.getElementById('aiGuideContainer');
+    aiContainer.classList.remove('hidden');
+    aiContainer.innerHTML = `<div class="flex justify-center items-center py-4"><i class="fas fa-circle-notch fa-spin text-purple-400 text-2xl"></i><span class="ml-3 text-purple-300 font-bold">Consulting AI Almanac for ` + destNode.name + `...</span></div>`;
 
-            const apiKey = ""; 
-            if (!apiKey) {
-                setTimeout(() => { aiContainer.innerHTML = destNode.offlineGuide; }, 600);
-                return;
-            }
+    // 1. PASTE YOUR API KEY INSIDE THE QUOTES BELOW
+    const apiKey = "YOUR_GEMINI_API_KEY_HERE"; 
 
-            const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=" + apiKey;
-            
-            // DYNAMIC UPDATE: The prompt now explicitly forces the AI to look for Vineyards, Gardens, Ice Creams, and surrounding village/tender pubs.
-            const prompt = `You are a highly knowledgeable sailing assistant and local port guide. Provide a comprehensive breakdown for a visiting yacht crew to ${destNode.name}, UK. 
-            Include venues accessible by walking from the main marina/port, AND specifically highlight venues accessible via yacht tender (e.g., up river creeks, hidden beaches, or specific pubs like the Ferryboat Inn and Shipwrights in the Helford River or The Ship Inn at Noss Mayo).
-            FOCUS HEAVILY on historic pubs, waterside inns, seafood restaurants, gastro pubs, local vineyards, large beautiful gardens to visit, and places serving must-have local ice creams.
-            List specific local recommendations in these distinct categories, aiming for up to 10 venues per category if the location allows: 
-            1. Historic Pubs, Gastro Pubs & Cocktail Lounges 🍸🍺 (Provide up to 10 iconic sailors' pubs, lively spots, and great pints. Strongly highlight pubs in surrounding villages or tender-accessible spots)
-            2. Seafood Restaurants & Bistros 🍽️ (Provide up to 10 local catch, fine dining, and hearty meals)
-            3. Vineyards & Large Gardens to Visit 🍷🌺 (Local wine tastings, historic estates, coastal gardens)
-            4. Must-Have Ice Creams & Sweet Treats 🍦 (The best local parlors, dairy ice creams, or fudge shops)
-            5. Grocery Stores, Markets & Provisions 🛒 
-            6. Marine Fuel & Oil Stations ⛽ 
-            CRITICAL FORMATTING RULES: 
-            - For EACH food, drink, garden, or bar recommendation, you MUST include an estimated TripAdvisor score (e.g., "⭐ 4.5/5") right next to the name. Wrap the venue name in HTML <strong> tags.
-            - For EACH recommendation, you MUST provide a clickable HTML <a> tag linking to their official website or TripAdvisor page.
-            - Output MUST be strictly raw HTML. Use <h4 class='text-purple-400 font-bold mt-3 mb-1'> for section headers and <ul class='list-disc pl-4 mb-2 space-y-1 text-slate-300'> for lists. Make the anchor links visually appealing using Tailwind classes like class='text-blue-400 hover:text-blue-300 underline ml-1 text-[10px]'. You MUST include <i class="fas fa-external-link-alt"></i> inside the link label (e.g. Web).
-            - Do NOT use markdown code blocks like \`\`\`html.`;
+    // Safe Check: If no key is set, instantly slide back to your stored offline guide data
+    if (!apiKey || apiKey === "YOUR_GEMINI_API_KEY_HERE") {
+        setTimeout(() => { aiContainer.innerHTML = destNode.offlineGuide; }, 600);
+        return;
+    }
 
-            const options = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            };
+    // 2. MODEL UPDATED TO STABLE PRODUCTION VERSION (gemini-2.5-flash)
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
+    
+    const prompt = `You are a highly knowledgeable sailing assistant and local port guide. Provide a comprehensive breakdown for a visiting yacht crew to ${destNode.name}, UK. 
+    Include venues accessible by walking from the main marina/port, AND specifically highlight venues accessible via yacht tender (e.g., up river creeks, hidden beaches, or specific pubs like the Ferryboat Inn and Shipwrights in the Helford River or The Ship Inn at Noss Mayo).
+    FOCUS HEAVILY on historic pubs, waterside inns, seafood restaurants, gastro pubs, local vineyards, large beautiful gardens to visit, and places serving must-have local ice creams.
+    List specific local recommendations in these distinct categories, aiming for up to 10 venues per category if the location allows: 
+    1. Historic Pubs, Gastro Pubs & Cocktail Lounges 🍸🍺 (Provide up to 10 iconic sailors' pubs, lively spots, and great pints. Strongly highlight pubs in surrounding villages or tender-accessible spots)
+    2. Seafood Restaurants & Bistros 🍽️ (Provide up to 10 local catch, fine dining, and hearty meals)
+    3. Vineyards & Large Gardens to Visit 🍷🌺 (Local wine tastings, historic estates, coastal gardens)
+    4. Must-Have Ice Creams & Sweet Treats 🍦 (The best local parlors, dairy ice creams, or fudge shops)
+    5. Grocery Stores, Markets & Provisions 🛒 
+    6. Marine Fuel & Oil Stations ⛽ 
+    CRITICAL FORMATTING RULES: 
+    - For EACH food, drink, garden, or bar recommendation, you MUST include an estimated TripAdvisor score (e.g., "⭐ 4.5/5") right next to the name. Wrap the venue name in HTML <strong> tags.
+    - For EACH recommendation, you MUST provide a clickable HTML <a> tag linking to their official website or TripAdvisor page.
+    - Output MUST be strictly raw HTML. Use <h4 class='text-purple-400 font-bold mt-3 mb-1'> for section headers and <ul class='list-disc pl-4 mb-2 space-y-1 text-slate-300'> for lists. Make the anchor links visually appealing using Tailwind classes like class='text-blue-400 hover:text-blue-300 underline ml-1 text-[10px]'. You MUST include <i class="fas fa-external-link-alt"></i> inside the link label (e.g. Web).
+    - Do NOT use markdown code blocks like \`\`\`html.`;
 
-            try {
-                const data = await fetchWithBackoff(url, options);
-                let htmlContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "No information available at this time.";
-                htmlContent = htmlContent.replace(/```html/gi, '').replace(/```/g, '');
-                aiContainer.innerHTML = htmlContent;
-            } catch (error) {
-                console.error("AI Fetch Error, loading fallback:", error);
-                aiContainer.innerHTML = destNode.offlineGuide;
-            }
-        }
+    const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    };
+
+    try {
+        const data = await fetchWithBackoff(url, options);
+        let htmlContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "No information available at this time.";
+        htmlContent = htmlContent.replace(/```html/gi, '').replace(/```/g, '');
+        aiContainer.innerHTML = htmlContent;
+    } catch (error) {
+        console.error("AI Fetch Error, loading fallback:", error);
+        // Robust Fallback: If you are out of range or cell signal drops, load the offline guide manually
+        aiContainer.innerHTML = destNode.offlineGuide;
+    }
+}
 
         // Setup dropdown state change listeners to update localStorage
         depSelect.addEventListener('change', () => {
