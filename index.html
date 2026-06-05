@@ -2512,7 +2512,7 @@
             }
 
             document.getElementById('eoceanicLink').href = destNode.eoceanic || "https://eoceanic.com/search?q=" + encodeURIComponent(destNode.name);
-            document.getElementById('googleMapsLink').href = "https://www.google.com/maps?q=" + destNode.lat + "," + destNode.lon;
+           document.getElementById('googleMapsLink').href = "https://www.google.com/maps/search/?api=1&query=" + destNode.lat + "," + destNode.lon;
             if (myGPSCoords) {
                 document.getElementById('coordinateReadout').innerHTML = `<span class="text-cyan-400 font-bold"><i class="fas fa-compass"></i> My GPS: ` + myGPSCoords.lat.toFixed(4) + `°N, ` + Math.abs(myGPSCoords.lon).toFixed(4) + `°W</span>`;
             } else {
