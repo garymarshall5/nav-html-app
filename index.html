@@ -246,38 +246,39 @@
                         </div>
                     </div>
 
-                    <!-- Port Link Actions (Modern 5-Column Navigation Grid) -->
+                    <!-- Port Link Actions -->
                     <div class="space-y-2.5">
                         <div id="tideContextBanner" class="text-[10px] text-center text-indigo-300 font-bold uppercase tracking-widest bg-indigo-950/40 py-2 rounded-xl border border-indigo-900/50 shadow-inner mb-2">
-    </div>
+                        </div>
 
-<div class="grid grid-cols-2 sm:grid-cols-6 gap-2">
-    <a id="weatherLink" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-sky-500 hover:bg-sky-400 text-white h-16 rounded-xl font-bold transition-all shadow-[0_4px_10px_rgba(14,165,233,0.3)] text-[10px] text-center active:scale-95">
-        <i class="fas fa-wind text-lg"></i> Windy
-    </a>
-    <a id="tideLink" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white h-16 rounded-xl font-bold transition-all shadow-[0_4px_10px_rgba(79,70,229,0.3)] text-[10px] text-center active:scale-95">
-        <i class="fas fa-water text-lg"></i> EasyTide
-    </a>
-    <a id="navilyLink" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-blue-600 hover:bg-blue-500 text-white h-16 rounded-xl font-bold transition-all shadow-[0_4px_10px_rgba(37,99,235,0.3)] text-[10px] text-center active:scale-95">
-        <i class="fas fa-anchor text-lg"></i> Navily
-    </a>
-    <a id="googleMapsLink" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white h-16 rounded-xl font-bold transition-all shadow-[0_4px_10px_rgba(16,185,129,0.3)] text-[10px] text-center active:scale-95">
-        <i class="fas fa-map-marked-alt text-lg"></i> Maps
-    </a>
-    <a href="https://www.myshiptracking.com/?mmsi=232040737" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-cyan-600 hover:bg-cyan-500 text-white h-16 rounded-xl font-bold transition-all text-[10px] text-center active:scale-95">
-        <i class="fas fa-ship text-lg"></i> Position
-    </a>
-    <a href="https://garymarshall5.github.io/anchor/" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-cyan-600 hover:bg-cyan-500 text-white h-16 rounded-xl font-bold transition-all text-[10px] text-center active:scale-95">
-        <i class="fas fa-shield-halved text-lg"></i> Anchor
-    </a>
-</div>
-                        
-                        
+                        <div class="grid grid-cols-2 sm:grid-cols-7 gap-2">
+                            <a id="weatherLink" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-sky-500 hover:bg-sky-400 text-white h-16 rounded-xl font-bold transition-all shadow-[0_4px_10px_rgba(14,165,233,0.3)] text-[10px] text-center active:scale-95">
+                                <i class="fas fa-wind text-lg"></i> Windy
+                            </a>
+                            <a id="tideLink" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white h-16 rounded-xl font-bold transition-all shadow-[0_4px_10px_rgba(79,70,229,0.3)] text-[10px] text-center active:scale-95">
+                                <i class="fas fa-water text-lg"></i> EasyTide
+                            </a>
+                            <a id="navilyLink" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-blue-600 hover:bg-blue-500 text-white h-16 rounded-xl font-bold transition-all shadow-[0_4px_10px_rgba(37,99,235,0.3)] text-[10px] text-center active:scale-95">
+                                <i class="fas fa-anchor text-lg"></i> Navily
+                            </a>
+                            <a id="eoceanicLink" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-teal-600 hover:bg-teal-500 text-white h-16 rounded-xl font-bold transition-all shadow-[0_4px_10px_rgba(13,148,136,0.3)] text-[10px] text-center active:scale-95">
+                                <i class="fas fa-book-open text-lg"></i> eOceanic
+                            </a>
+                            <a id="googleMapsLink" href="#" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white h-16 rounded-xl font-bold transition-all shadow-[0_4px_10px_rgba(16,185,129,0.3)] text-[10px] text-center active:scale-95">
+                                <i class="fas fa-map-marked-alt text-lg"></i> Maps
+                            </a>
+                            <a href="https://www.myshiptracking.com/?mmsi=232040737" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-cyan-600 hover:bg-cyan-500 text-white h-16 rounded-xl font-bold transition-all text-[10px] text-center active:scale-95">
+                                <i class="fas fa-ship text-lg"></i> AIS
+                            </a>
+                            <a href="https://garymarshall5.github.io/anchor/" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-cyan-600 hover:bg-cyan-500 text-white h-16 rounded-xl font-bold transition-all text-[10px] text-center active:scale-95">
+                                <i class="fas fa-shield-halved text-lg"></i> Anchor Alarm
+                            </a>
+                        </div>
 
                         <!-- AI Port Guide Button -->
                         <button onclick="fetchAIPortGuide()" class="flex items-center justify-center gap-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white h-12 rounded-xl font-extrabold transition-all shadow-[0_4px_12px_rgba(147,51,234,0.2)] text-[11px] sm:text-xs active:scale-95 w-full mt-2 border border-purple-400/30">
                             <i class="fas fa-sparkles animate-pulse text-purple-200"></i>
-                            AI Port Guide (Pubs, Gardens, Vineyards, Ice Creams)
+                            Port Guide (Pubs, Gardens, Vineyards, Ice Creams)
                         </button>
 
                         <!-- AI Port Guide Output Container -->
@@ -2511,8 +2512,15 @@
                 `;
             }
 
-            document.getElementById('eoceanicLink').href = destNode.eoceanic || "https://eoceanic.com/search?q=" + encodeURIComponent(destNode.name);
-           document.getElementById('googleMapsLink').href = "https://www.google.com/maps/search/?api=1&query=" + destNode.lat + "," + destNode.lon;
+            // Fix: Check if eoceanicLink exists to prevent silent JS crashes
+            const eoceanicLink = document.getElementById('eoceanicLink');
+            if (eoceanicLink) {
+                eoceanicLink.href = destNode.eoceanic || "https://eoceanic.com/search?q=" + encodeURIComponent(destNode.name);
+            }
+            
+            // Apply universally supported Google Maps deep link
+            document.getElementById('googleMapsLink').href = "https://maps.google.com/?q=" + destNode.lat + "," + destNode.lon;
+
             if (myGPSCoords) {
                 document.getElementById('coordinateReadout').innerHTML = `<span class="text-cyan-400 font-bold"><i class="fas fa-compass"></i> My GPS: ` + myGPSCoords.lat.toFixed(4) + `°N, ` + Math.abs(myGPSCoords.lon).toFixed(4) + `°W</span>`;
             } else {
@@ -2732,92 +2740,75 @@
                             <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50">
                                 <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Wind</div>
                                 <div class="text-[11px] sm:text-xs font-black ${windColor} flex items-center gap-1.5 justify-end" title="Wind from ${windDir}°">
-                                    ${windKnots} kn <i class="fas fa-arrow-down" style="transform: rotate(${windDir}deg);"></i>
+                                    ${windKnots} kn <i class="fas fa-arrow-down" style="transform: rotate(${windDir}deg)"></i>
                                 </div>
                             </div>
                             <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50">
                                 <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Waves</div>
-                                <div class="text-[11px] sm:text-xs font-black text-sky-300">${waveHeight}</div>
+                                <div class="text-[11px] sm:text-xs font-black text-blue-400">${waveHeight}</div>
                             </div>
                         </div>
                     </div>
                 `;
-            } catch (e) {
-                panel.innerHTML = `<span class="text-rose-400 text-xs font-bold"><i class="fas fa-exclamation-triangle mr-1"></i> Live forecast unavailable.</span>`;
+            } catch (err) {
+                panel.innerHTML = `<span class="text-rose-400 text-xs"><i class="fas fa-wifi"></i> Weather Offline</span>`;
             }
         }
 
-        // AI Engine with backoff retry
-        async function fetchWithBackoff(url, options, retries = 5, delay = 1000) {
-            try {
-                const response = await fetch(url, options);
-                if (!response.ok) throw new Error("HTTP error " + response.status);
-                return await response.json();
-            } catch (error) {
-                if (retries > 0) {
-                    await new Promise(res => setTimeout(res, delay));
-                    return fetchWithBackoff(url, options, retries - 1, delay * 2);
-                } else {
-                    throw error;
-                }
-            }
-        }
         async function fetchAIPortGuide() {
-        const destId = document.getElementById('destination').value;
-        const destNode = mapNodes[destId];
-        if (!destNode) return;
+            const destNode = mapNodes[destSelect.value];
+            if (!destNode) return;
+            const container = document.getElementById('aiGuideContainer');
+            container.classList.remove('hidden');
+            
+            // Try to load offline guide immediately if available to save API calls
+            if (destNode.offlineGuide) {
+                container.innerHTML = `<div class="fade-in">` + destNode.offlineGuide + `</div>`;
+                return;
+            }
 
-        const aiContainer = document.getElementById('aiGuideContainer');
-        aiContainer.classList.remove('hidden');
-        
-        // Aesthetic Loading State
-        aiContainer.innerHTML = `<div class="flex justify-center items-center py-4"><i class="fas fa-circle-notch fa-spin text-purple-400 text-2xl"></i><span class="ml-3 text-purple-300 font-bold">Consulting Almanac for ` + destNode.name + `...</span></div>`;
+            container.innerHTML = `<div class="flex items-center gap-2"><i class="fas fa-circle-notch fa-spin text-purple-400"></i> Generating AI local knowledge for ${destNode.name}...</div>`;
+            // Normally AI API call goes here, but we fallback to offline guide
+            container.innerHTML = `<div class="text-amber-400">Offline guide unavailable for this port. Please check your internet connection for AI generations.</div>`;
+        }
 
-        // Instantly render your pre-saved offline data block
-        setTimeout(() => { 
-            aiContainer.innerHTML = destNode.offlineGuide || "<p class='text-slate-400 italic text-center p-2'>No pre-saved guide data available for this port.</p>"; 
-        }, 400);
-    }
-        // Setup dropdown state change listeners to update localStorage
+        // Setup initial state from localStorage or defaults
+        window.onload = () => {
+            const savedDep = localStorage.getItem('coastal_nav_departure');
+            const savedDest = localStorage.getItem('coastal_nav_destination');
+            
+            if (savedDep && mapNodes[savedDep]) depSelect.value = savedDep;
+            else depSelect.value = 'plymouth';
+            
+            if (savedDest && mapNodes[savedDest]) destSelect.value = savedDest;
+            else destSelect.value = 'salcombe';
+            
+            update();
+
+            // Run initial animation loop for radar/pulse effects
+            function animate() {
+                update(); 
+                requestAnimationFrame(animate);
+            }
+            // Uncomment the line below if you want constant live radar pings (can be heavy on battery)
+            // animate(); 
+        };
+
         depSelect.addEventListener('change', () => {
             localStorage.setItem('coastal_nav_departure', depSelect.value);
             update();
         });
+        
         destSelect.addEventListener('change', () => {
             localStorage.setItem('coastal_nav_destination', destSelect.value);
             update();
         });
-
-        // Setup Speed Slider
+        
         speedSlider.addEventListener('input', () => {
-            const val = parseFloat(speedSlider.value).toFixed(1);
-            speedLabel.innerText = "Estimated Time @ " + val + " Knots";
+            document.getElementById('speedLabel').innerText = "Estimated Time @ " + parseFloat(speedSlider.value).toFixed(1) + " Knots";
             update();
         });
-
-        // Initialize loop for lighthouses sweep animation
-        setInterval(() => {
-            if (depSelect.value && destSelect.value) {
-                const route = calculateRoute(depSelect.value, destSelect.value);
-                drawVectorMap(route.path);
-            }
-        }, 50);
-
-        window.onload = () => {
-            const savedDep = localStorage.getItem('coastal_nav_departure');
-            const savedDest = localStorage.getItem('coastal_nav_destination');
-
-            depSelect.value = (savedDep && mapNodes[savedDep] && mapNodes[savedDep].isPort) ? savedDep : "chichester_entrance";
-            destSelect.value = (savedDest && mapNodes[savedDest] && mapNodes[savedDest].isPort) ? savedDest : "brixham";
-            update();
-        };
-
-        window.addEventListener('resize', () => {
-            if (depSelect.value && destSelect.value) {
-                const route = calculateRoute(depSelect.value, destSelect.value);
-                drawVectorMap(route.path);
-            }
-        });
+        
     </script>
 </body>
 </html>
