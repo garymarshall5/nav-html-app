@@ -2767,9 +2767,9 @@
                         <i class="fas ${weatherInfo.icon} ${weatherInfo.color} text-xl drop-shadow-md"></i>
                     </div>
                     <div>
-                        <div class="text-[9px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
-                            <i class="fas fa-clock text-sky-500/70"></i> As of ${formattedTime} ${destName ? `• ${destName}` : ''}
-                        </div>
+                        <div class="text-[9px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1.5 whitespace-nowrap">
+    <i class="fas fa-clock text-sky-500/70"></i> As of ${formattedTime} ${destName ? `• ${destName}` : ''}
+</div>
                         <div class="text-xs sm:text-sm text-white font-bold tracking-wide">
                             ${temp}°C <span class="text-[10px] text-slate-400 font-normal">(Feels ${feelsLike}°)</span>, ${weatherInfo.text}
                         </div>
