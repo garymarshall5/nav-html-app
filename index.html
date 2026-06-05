@@ -2686,10 +2686,10 @@
     panel.innerHTML = `<i class="fas fa-circle-notch fa-spin text-sky-400"></i><span class="ml-2 text-xs text-sky-300 font-bold tracking-widest uppercase">Fetching Marine Weather...</span>`;
     
     try {
-        // Fetch dual APIs concurrently
+        // 1. UPDATED API STRINGS: Added surface_pressure, wind_wave_height, and swell_wave_height
         const [weatherRes, marineRes] = await Promise.all([
-            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code&hourly=precipitation_probability,precipitation&wind_speed_unit=kn&timezone=auto`),
-            fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&timezone=auto`)
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,surface_pressure&hourly=precipitation_probability,precipitation&wind_speed_unit=kn&timezone=auto`),
+            fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wind_wave_height,swell_wave_height&timezone=auto`)
         ]);
         
         const weatherData = await weatherRes.json();
@@ -2741,6 +2741,25 @@
         const rainProb = weatherData.hourly.precipitation_probability[targetIndex] || 0;
         const rainAmount = weatherData.hourly.precipitation[targetIndex] || 0;
 
+        // --- EXTRACT NEW TELEMETRY ---
+        const pressure = Math.round(weatherData.current.surface_pressure);
+        const windWave = marineData.current?.wind_wave_height || 0;
+        const swellWave = marineData.current?.swell_wave_height || 0;
+
+        // Sea State Comfort Calculator (Chop vs. Swell evaluation)
+        let seaStateText = "Calm";
+        let seaStateColor = "text-sky-400";
+        if (windWave > 0.5 && windWave >= swellWave) {
+            seaStateText = "Choppy";
+            seaStateColor = "text-orange-400";
+        } else if (swellWave > 1.0 && swellWave > windWave) {
+            seaStateText = "Rolling Swell";
+            seaStateColor = "text-indigo-400";
+        } else if (windWave > 1.5 || swellWave > 2.0) {
+            seaStateText = "Rough Rough";
+            seaStateColor = "text-rose-400";
+        }
+
         let waveHeight = marineData.current?.wave_height;
         waveHeight = waveHeight !== undefined && waveHeight !== null ? waveHeight.toFixed(1) + "m" : "Calm";
 
@@ -2770,8 +2789,11 @@
                         <div class="text-[9px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fas fa-clock text-sky-500/70"></i> As of ${formattedTime} ${destName ? `• ${destName}` : ''}
                         </div>
-                        <div class="text-xs sm:text-sm text-white font-bold tracking-wide whitespace-nowrap">
-                            ${temp}°C <span class="text-[10px] text-slate-400 font-normal">(Feels ${feelsLike}°)</span>, ${weatherInfo.text}
+                        <div class="text-xs sm:text-sm text-white font-bold tracking-wide whitespace-nowrap flex items-center gap-2">
+                            <span>${temp}°C <span class="text-[10px] text-slate-400 font-normal">(Feels ${feelsLike}°)</span>, ${weatherInfo.text}</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800/80 border border-slate-700/50 font-medium text-slate-400" title="Barometric Surface Pressure">
+                                <i class="fas fa-tachometer-alt text-slate-500 mr-1"></i>${pressure} hPa
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -2792,10 +2814,11 @@
                         </div>
                     </div>
                     
-                    <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50 min-w-[60px] sm:min-w-[70px] shrink-0">
+                    <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50 min-w-[75px] sm:min-w-[85px] shrink-0">
                         <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Waves</div>
-                        <div class="text-[11px] sm:text-xs font-black text-blue-400 whitespace-nowrap" title="Wave Period: ${wavePeriod}">
-                            ${waveHeight} <span class="text-[9px] font-bold text-slate-400 ml-0.5">${wavePeriod}</span>
+                        <div class="text-[11px] sm:text-xs font-black text-blue-400 whitespace-nowrap flex flex-col items-end" title="Wave Period: ${wavePeriod} | Wind Wave: ${windWave.toFixed(1)}m, Swell: ${swellWave.toFixed(1)}m">
+                            <div>${waveHeight} <span class="text-[9px] font-bold text-slate-400 ml-0.5">${wavePeriod}</span></div>
+                            <span class="text-[7px] uppercase tracking-wider font-extrabold ${seaStateColor} mt-0.5 leading-none">${seaStateText}</span>
                         </div>
                     </div>
                 </div>
