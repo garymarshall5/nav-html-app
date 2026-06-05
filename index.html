@@ -2682,88 +2682,106 @@
 
         // Live Weather Engine
         async function fetchLocalWeather(lat, lon, destName) {
-            const panel = document.getElementById('inshoreForecastContent');
-            panel.innerHTML = `<i class="fas fa-circle-notch fa-spin text-sky-400"></i><span class="ml-2 text-xs text-sky-300 font-bold tracking-widest uppercase">Fetching Marine Weather...</span>`;
-            
-            try {
-                // Fetch dual APIs asynchronously
-                const [weatherRes, marineRes] = await Promise.all([
-                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code&wind_speed_unit=kn&timezone=auto`),
-                    fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height&timezone=auto`)
-                ]);
-                
-                const weatherData = await weatherRes.json();
-                const marineData = await marineRes.json();
+    const panel = document.getElementById('inshoreForecastContent');
+    panel.innerHTML = `<i class="fas fa-circle-notch fa-spin text-sky-400"></i><span class="ml-2 text-xs text-sky-300 font-bold tracking-widest uppercase">Fetching Marine Weather...</span>`;
+    
+    try {
+        // 1. UPDATED API CALLS: Appended wind_gusts_10m, apparent_temperature, and wave_period
+        const [weatherRes, marineRes] = await Promise.all([
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code&wind_speed_unit=kn&timezone=auto`),
+            fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&timezone=auto`)
+        ]);
+        
+        const weatherData = await weatherRes.json();
+        const marineData = await marineRes.json();
 
-                const wmoCodes = {
-                    0: { text: "Clear", icon: "fa-sun", color: "text-yellow-400" },
-                    1: { text: "Mostly Clear", icon: "fa-sun", color: "text-yellow-400" },
-                    2: { text: "Partly Cloudy", icon: "fa-cloud-sun", color: "text-slate-300" },
-                    3: { text: "Overcast", icon: "fa-cloud", color: "text-slate-400" },
-                    45: { text: "Fog", icon: "fa-smog", color: "text-slate-400" },
-                    48: { text: "Rime Fog", icon: "fa-smog", color: "text-slate-400" },
-                    51: { text: "Light Drizzle", icon: "fa-cloud-rain", color: "text-sky-300" },
-                    53: { text: "Drizzle", icon: "fa-cloud-rain", color: "text-sky-300" },
-                    55: { text: "Dense Drizzle", icon: "fa-cloud-rain", color: "text-sky-300" },
-                    61: { text: "Light Rain", icon: "fa-cloud-showers-heavy", color: "text-sky-400" },
-                    63: { text: "Rain", icon: "fa-cloud-showers-heavy", color: "text-sky-400" },
-                    65: { text: "Heavy Rain", icon: "fa-cloud-showers-heavy", color: "text-blue-500" },
-                    71: { text: "Light Snow", icon: "fa-snowflake", color: "text-white" },
-                    73: { text: "Snow", icon: "fa-snowflake", color: "text-white" },
-                    75: { text: "Heavy Snow", icon: "fa-snowflake", color: "text-white" },
-                    80: { text: "Rain Showers", icon: "fa-cloud-showers-heavy", color: "text-sky-400" },
-                    81: { text: "Heavy Showers", icon: "fa-cloud-showers-heavy", color: "text-blue-500" },
-                    82: { text: "Violent Showers", icon: "fa-cloud-showers-heavy", color: "text-blue-500" },
-                    95: { text: "Thunderstorm", icon: "fa-bolt", color: "text-yellow-500" }
-                };
+        const wmoCodes = {
+            0: { text: "Clear", icon: "fa-sun", color: "text-yellow-400" },
+            1: { text: "Mostly Clear", icon: "fa-sun", color: "text-yellow-400" },
+            2: { text: "Partly Cloudy", icon: "fa-cloud-sun", color: "text-slate-300" },
+            3: { text: "Overcast", icon: "fa-cloud", color: "text-slate-400" },
+            45: { text: "Fog", icon: "fa-smog", color: "text-slate-400" },
+            48: { text: "Rime Fog", icon: "fa-smog", color: "text-slate-400" },
+            51: { text: "Light Drizzle", icon: "fa-cloud-rain", color: "text-sky-300" },
+            53: { text: "Drizzle", icon: "fa-cloud-rain", color: "text-sky-300" },
+            55: { text: "Dense Drizzle", icon: "fa-cloud-rain", color: "text-sky-300" },
+            61: { text: "Light Rain", icon: "fa-cloud-showers-heavy", color: "text-sky-400" },
+            63: { text: "Rain", icon: "fa-cloud-showers-heavy", color: "text-sky-400" },
+            65: { text: "Heavy Rain", icon: "fa-cloud-showers-heavy", color: "text-blue-500" },
+            71: { text: "Light Snow", icon: "fa-snowflake", color: "text-white" },
+            73: { text: "Snow", icon: "fa-snowflake", color: "text-white" },
+            75: { text: "Heavy Snow", icon: "fa-snowflake", color: "text-white" },
+            80: { text: "Rain Showers", icon: "fa-cloud-showers-heavy", color: "text-sky-400" },
+            81: { text: "Heavy Showers", icon: "fa-cloud-showers-heavy", color: "text-blue-500" },
+            82: { text: "Violent Showers", icon: "fa-cloud-showers-heavy", color: "text-blue-500" },
+            95: { text: "Thunderstorm", icon: "fa-bolt", color: "text-yellow-500" }
+        };
 
-                const code = weatherData.current.weather_code;
-                const weatherInfo = wmoCodes[code] || { text: "Variable", icon: "fa-cloud", color: "text-slate-400" };
-                
-                const windKnots = Math.round(weatherData.current.wind_speed_10m);
-                const windDir = weatherData.current.wind_direction_10m;
-                const temp = Math.round(weatherData.current.temperature_2m);
-                let waveHeight = marineData.current?.wave_height;
-                waveHeight = waveHeight !== undefined && waveHeight !== null ? waveHeight.toFixed(1) + "m" : "Calm";
+        const code = weatherData.current.weather_code;
+        const weatherInfo = wmoCodes[code] || { text: "Variable", icon: "fa-cloud", color: "text-slate-400" };
+        
+        const windKnots = Math.round(weatherData.current.wind_speed_10m);
+        const windDir = weatherData.current.wind_direction_10m;
+        const temp = Math.round(weatherData.current.temperature_2m);
+        
+        // 2. EXTRACTION: Pulling the new variables from the response payloads
+        const feelsLike = Math.round(weatherData.current.apparent_temperature);
+        const windGusts = Math.round(weatherData.current.wind_gusts_10m);
+        
+        let waveHeight = marineData.current?.wave_height;
+        waveHeight = waveHeight !== undefined && waveHeight !== null ? waveHeight.toFixed(1) + "m" : "Calm";
 
-                // Warning colors for wind
-                let windColor = "text-emerald-400";
-                if (windKnots > 15) windColor = "text-yellow-400";
-                if (windKnots > 21) windColor = "text-orange-500";
-                if (windKnots > 33) windColor = "text-rose-500";
+        let wavePeriod = marineData.current?.wave_period;
+        wavePeriod = wavePeriod !== undefined && wavePeriod !== null ? wavePeriod.toFixed(0) + "s" : "--";
 
-                panel.innerHTML = `
-                    <div class="flex items-center justify-between w-full fade-in">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center shadow-inner border border-slate-700/50 shrink-0">
-                                <i class="fas ${weatherInfo.icon} ${weatherInfo.color} text-xl drop-shadow-md"></i>
-                            </div>
-                            <div>
-                                <div class="text-[9px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                                    <i class="fas fa-satellite"></i> Live Inshore Conditions
-                                </div>
-                                <div class="text-xs sm:text-sm text-white font-bold tracking-wide">${temp}°C, ${weatherInfo.text}</div>
-                            </div>
+        // Warning colors for wind (Evaluates maximum danger using gusts or sustained speed)
+        const maxWindCheck = Math.max(windKnots, windGusts);
+        let windColor = "text-emerald-400";
+        if (maxWindCheck > 15) windColor = "text-yellow-400";
+        if (maxWindCheck > 21) windColor = "text-orange-500";
+        if (maxWindCheck > 33) windColor = "text-rose-500";
+
+        // 3. UPDATED UI: Rendered feels-like temp, wind gusts, and wave period seamlessly
+        panel.innerHTML = `
+            <div class="flex items-center justify-between w-full fade-in">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center shadow-inner border border-slate-700/50 shrink-0">
+                        <i class="fas ${weatherInfo.icon} ${weatherInfo.color} text-xl drop-shadow-md"></i>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                            <i class="fas fa-cloud-sun-rain"></i> Live Conditions ${destName ? `• ${destName}` : ''}
                         </div>
-                        <div class="flex gap-2 sm:gap-4 text-right shrink-0">
-                            <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50">
-                                <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Wind</div>
-                                <div class="text-[11px] sm:text-xs font-black ${windColor} flex items-center gap-1.5 justify-end" title="Wind from ${windDir}°">
-                                    ${windKnots} kn <i class="fas fa-arrow-down" style="transform: rotate(${windDir}deg)"></i>
-                                </div>
-                            </div>
-                            <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50">
-                                <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Waves</div>
-                                <div class="text-[11px] sm:text-xs font-black text-blue-400">${waveHeight}</div>
-                            </div>
+                        <div class="text-xs sm:text-sm text-white font-bold tracking-wide">
+                            ${temp}°C <span class="text-[10px] text-slate-400 font-normal">(Feels ${feelsLike}°)</span>, ${weatherInfo.text}
                         </div>
                     </div>
-                `;
-            } catch (err) {
-                panel.innerHTML = `<span class="text-rose-400 text-xs"><i class="fas fa-wifi"></i> Weather Offline</span>`;
-            }
-        }
-
+                </div>
+                <div class="flex gap-2 sm:gap-4 text-right shrink-0">
+                    <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50">
+                        <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Wind</div>
+                        <div class="text-[11px] sm:text-xs font-black ${windColor} flex items-center gap-1.5 justify-end" title="Wind from ${windDir}° with gusts up to ${windGusts} kn">
+                            <span>${windKnots}<span class="text-[9px] font-bold text-slate-400">g</span>${windGusts} kn</span>
+                            <i class="fas fa-arrow-down" style="transform: rotate(${windDir}deg)"></i>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50">
+                        <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Waves</div>
+                        <div class="text-[11px] sm:text-xs font-black text-blue-400" title="Wave Period: ${wavePeriod}">
+                            ${waveHeight} <span class="text-[9px] font-bold text-slate-400 ml-0.5">${wavePeriod}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            
+    } catch (error) {
+        console.error("Error fetching marine weather:", error);
+        panel.innerHTML = `
+            <div class="text-xs text-rose-400 font-semibold flex items-center gap-1.5">
+                <i class="fas fa-exclamation-triangle"></i> Failed to load weather conditions.
+            </div>`;
+    }
+}
         async function fetchAIPortGuide() {
             const destNode = mapNodes[destSelect.value];
             if (!destNode) return;
