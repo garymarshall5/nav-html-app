@@ -2681,14 +2681,14 @@
         });
 
         // Live Weather Engine
-        async function fetchLocalWeather(lat, lon, destName) {
+       async function fetchLocalWeather(lat, lon, destName) {
     const panel = document.getElementById('inshoreForecastContent');
     panel.innerHTML = `<i class="fas fa-circle-notch fa-spin text-sky-400"></i><span class="ml-2 text-xs text-sky-300 font-bold tracking-widest uppercase">Fetching Marine Weather...</span>`;
     
     try {
-        // 1. UPDATED API CALLS: Appended wind_gusts_10m, apparent_temperature, and wave_period
+        // 1. UPDATED API CALL: Appended hourly parameters for rain amount and probability
         const [weatherRes, marineRes] = await Promise.all([
-            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code&wind_speed_unit=kn&timezone=auto`),
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code&hourly=precipitation_probability,precipitation&wind_speed_unit=kn&timezone=auto`),
             fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&timezone=auto`)
         ]);
         
@@ -2723,25 +2723,43 @@
         const windKnots = Math.round(weatherData.current.wind_speed_10m);
         const windDir = weatherData.current.wind_direction_10m;
         const temp = Math.round(weatherData.current.temperature_2m);
-        
-        // 2. EXTRACTION: Pulling the new variables from the response payloads
         const feelsLike = Math.round(weatherData.current.apparent_temperature);
         const windGusts = Math.round(weatherData.current.wind_gusts_10m);
         
+        const rawTime = weatherData.current.time;
+        const formattedTime = new Date(rawTime).toLocaleTimeString([], { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        // 2. EXTRACTION: Find index matching the current hour inside the hourly forecast arrays
+        const currentHourISO = weatherData.current.time; 
+        const hourlyIndex = weatherData.hourly.time.indexOf(currentHourISO);
+
+        // Fallback to index 0 if time match fails
+        const targetIndex = hourlyIndex !== -1 ? hourlyIndex : 0;
+        
+        const rainProb = weatherData.hourly.precipitation_probability[targetIndex] || 0;
+        const rainAmount = weatherData.hourly.precipitation[targetIndex] || 0;
+
         let waveHeight = marineData.current?.wave_height;
         waveHeight = waveHeight !== undefined && waveHeight !== null ? waveHeight.toFixed(1) + "m" : "Calm";
 
         let wavePeriod = marineData.current?.wave_period;
         wavePeriod = wavePeriod !== undefined && wavePeriod !== null ? wavePeriod.toFixed(0) + "s" : "--";
 
-        // Warning colors for wind (Evaluates maximum danger using gusts or sustained speed)
         const maxWindCheck = Math.max(windKnots, windGusts);
         let windColor = "text-emerald-400";
         if (maxWindCheck > 15) windColor = "text-yellow-400";
         if (maxWindCheck > 21) windColor = "text-orange-500";
         if (maxWindCheck > 33) windColor = "text-rose-500";
 
-        // 3. UPDATED UI: Rendered feels-like temp, wind gusts, and wave period seamlessly
+        // Dynamic warning color for rain probability
+        let rainColor = "text-slate-400";
+        if (rainProb > 20) rainColor = "text-sky-400";
+        if (rainProb > 60) rainColor = "text-blue-400";
+
+        // 3. UPDATED UI: Injected Precipitation Data block smoothly into the dashboard row
         panel.innerHTML = `
             <div class="flex items-center justify-between w-full fade-in">
                 <div class="flex items-center gap-3">
@@ -2749,15 +2767,21 @@
                         <i class="fas ${weatherInfo.icon} ${weatherInfo.color} text-xl drop-shadow-md"></i>
                     </div>
                     <div>
-                        <div class="text-[9px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                            <i class="fas fa-cloud-sun-rain"></i> Live Conditions ${destName ? `• ${destName}` : ''}
+                        <div class="text-[9px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                            <i class="fas fa-clock text-sky-500/70"></i> As of ${formattedTime} ${destName ? `• ${destName}` : ''}
                         </div>
                         <div class="text-xs sm:text-sm text-white font-bold tracking-wide">
                             ${temp}°C <span class="text-[10px] text-slate-400 font-normal">(Feels ${feelsLike}°)</span>, ${weatherInfo.text}
                         </div>
                     </div>
                 </div>
-                <div class="flex gap-2 sm:gap-4 text-right shrink-0">
+                <div class="flex gap-1.5 sm:gap-3 text-right shrink-0">
+                    <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50">
+                        <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Precip</div>
+                        <div class="text-[11px] sm:text-xs font-black ${rainColor}" title="Precipitation depth: ${rainAmount}mm">
+                            ${rainProb}% <span class="text-[9px] font-bold text-slate-400 ml-0.5">${rainAmount > 0 ? rainAmount.toFixed(1) + 'mm' : '0mm'}</span>
+                        </div>
+                    </div>
                     <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50">
                         <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Wind</div>
                         <div class="text-[11px] sm:text-xs font-black ${windColor} flex items-center gap-1.5 justify-end" title="Wind from ${windDir}° with gusts up to ${windGusts} kn">
