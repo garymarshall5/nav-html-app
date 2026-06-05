@@ -2688,7 +2688,7 @@
         });
 
         // Live Weather Engine
-async function fetchLocalWeather(lat, lon, destName) {
+      async function fetchLocalWeather(lat, lon, destName) {
     const panel = document.getElementById('inshoreForecastContent');
     panel.innerHTML = `<i class="fas fa-circle-notch fa-spin text-sky-400"></i><span class="ml-2 text-xs text-sky-300 font-bold tracking-widest uppercase">Fetching Marine Weather...</span>`;
     
@@ -2784,41 +2784,62 @@ async function fetchLocalWeather(lat, lon, destName) {
         if (rainProb > 20) rainColor = "text-sky-400";
         if (rainProb > 60) rainColor = "text-blue-400";
 
-        // --- RESPONSIVE STRUCTURAL BLUEPRINT ---
-        // Changed flex-nowrap to flex-wrap, changed to a column layout on mobile (md:flex-row)
+        // Complete Unbreakable Single-Row Structural Blueprint
         panel.innerHTML = `
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4 py-2 px-1 fade-in">
+            <div class="flex items-center justify-between w-full flex-nowrap overflow-x-auto gap-4 py-1 fade-in">
                 
-                <div class="flex items-center gap-3 w-full md:w-auto shrink-0">
+                <div class="flex items-center gap-3 shrink-0 min-w-0">
                     <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center shadow-inner border border-slate-700/50 shrink-0">
                         <i class="fas ${weatherInfo.icon} ${weatherInfo.color} text-xl drop-shadow-md"></i>
                     </div>
-                    <div class="min-w-0">
-                        <div class="text-[9px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1.5 wrap md:whitespace-nowrap">
+                    <div class="whitespace-nowrap min-w-0">
+                        <div class="text-[9px] text-sky-400 font-bold uppercase tracking-widest flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fas fa-clock text-sky-500/70"></i> As of ${formattedTime} ${destName ? `• ${destName}` : ''}
                         </div>
-                        <div class="text-xs sm:text-sm text-white font-bold tracking-wide flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <div class="text-xs sm:text-sm text-white font-bold tracking-wide whitespace-nowrap flex items-center gap-2">
                             <span>${temp}°C <span class="text-[10px] text-slate-400 font-normal">(Feels ${feelsLike}°)</span>, ${weatherInfo.text}</span>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800/80 border border-slate-700/50 font-medium text-slate-400 inline-flex items-center" title="Barometric Surface Pressure">
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800/80 border border-slate-700/50 font-medium text-slate-400" title="Barometric Surface Pressure">
                                 <i class="fas fa-tachometer-alt text-slate-500 mr-1"></i>${pressure} hPa
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-2 w-full md:w-auto md:flex md:items-center md:gap-3 text-left md:text-right">
-                    
-                    <div class="bg-slate-900/50 p-2 md:py-1 md:px-2 rounded-lg border border-slate-700/50 w-full md:min-w-[70px]">
+                <div class="flex items-center gap-2 sm:gap-3 text-right shrink-0 flex-nowrap ml-auto">
+                    <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50 min-w-[60px] sm:min-w-[70px] shrink-0">
                         <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Precip</div>
-                        <div class="text-[11px] sm:text-xs font-black ${rainColor} break-words" title="Precipitation depth: ${rainAmount}mm">
-                            ${rainProb}% <span class="block md:inline text-[9px] font-bold text-slate-400 md:ml-0.5">${rainAmount > 0 ? rainAmount.toFixed(1) + 'mm' : '0mm'}</span>
+                        <div class="text-[11px] sm:text-xs font-black ${rainColor} whitespace-nowrap" title="Precipitation depth: ${rainAmount}mm">
+                            ${rainProb}% <span class="text-[9px] font-bold text-slate-400 ml-0.5">${rainAmount > 0 ? rainAmount.toFixed(1) + 'mm' : '0mm'}</span>
                         </div>
                     </div>
                     
-                    <div class="bg-slate-900/50 p-2 md:py-1 md:px-2 rounded-lg border border-slate-700/50 w-full md:min-w-[90px]">
+                    <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50 min-w-[80px] sm:min-w-[90px] shrink-0">
                         <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Wind</div>
-                        <div class="text-[11px] sm:text-xs font-black ${windColor} flex items-center justify-between md:justify-end gap-1" title="Wind from ${windDir}° with gusts up to ${windGusts} kn">
-                            <span class="tracking-tight">${windKnots}<span class="text-[9px] font-bold text-slate-400">g</span>${windGusts}<span class="text-[9px] font-normal text-slate-400 ml-0.5">kn</span></span>
+                        <div class="text-[11px] sm:text-xs font-black ${windColor} flex items-center gap-1.5 justify-end whitespace-nowrap" title="Wind from ${windDir}° with gusts up to ${windGusts} kn">
+                            <span>${windKnots}<span class="text-[9px] font-bold text-slate-400">g</span>${windGusts} kn</span>
+                            <i class="fas fa-arrow-down" style="transform: rotate(${windDir}deg)"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50 min-w-[75px] sm:min-w-[85px] shrink-0">
+                        <div class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Waves</div>
+                        <div class="text-[11px] sm:text-xs font-black text-blue-400 whitespace-nowrap flex flex-col items-end" title="Wave Period: ${wavePeriod} | Wind Wave: ${windWave.toFixed(1)}m, Swell: ${swellWave.toFixed(1)}m">
+                            <div>${waveHeight} <span class="text-[9px] font-bold text-slate-400 ml-0.5">${wavePeriod}</span></div>
+                            <span class="text-[7px] uppercase tracking-wider font-extrabold ${seaStateColor} mt-0.5 leading-none">${seaStateText}</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>`;
+            
+    } catch (error) {
+        console.error("Error fetching marine weather:", error);
+        panel.innerHTML = `
+            <div class="text-xs text-rose-400 font-semibold flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fas fa-exclamation-triangle"></i> Failed to load weather conditions.
+            </div>`;
+    }
+}
         async function fetchAIPortGuide() {
             const destNode = mapNodes[destSelect.value];
             if (!destNode) return;
